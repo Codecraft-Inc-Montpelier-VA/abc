@@ -1,0 +1,65 @@
+== Code Layout
+
+In literate programming terminology,
+a _chunk_ is a named part of the final program.
+The program chunks form a tree and the root of that tree
+is named '\*' by default.
+We follow the convention of naming the root the same as the output
+file name.
+There is just a single root in this literate program, 
+the +abc.cpp+ file.
+The process of extracting the program tree formed by the chunks is
+called _tangle_.
+The program, +atangle+, extracts each root chunk to produce
+the corresponding C/C++ source file.
+
+=== +abc.cpp+
+
+[source,c]
+----
+<<abc.cpp>>=
+<<edit warning>>
+<<copyright info>>
+/*
+ *++
+ * Project:
+ *   +abc+ -- a simple test program for coroutines.  <by Cary WR Campbell>
+ *
+ * Module:
+ *   +abc+ executable for macOS or Windows.
+ *--
+ */
+/*
+ * Include files
+ */
+<<include files>>
+/*
+ * Definitions
+ */
+<<definitions>>
+/*
+ * Variables
+ */
+<<global variables>>
+/*
+ * Forward References
+ */
+<<forward references>>
+/*
+ * Main Routine
+ */
+<<main routine>>
+/*
+ * Coroutines
+ */
+<<coroutines>>
+/*
+ * Utility Routines
+ */
+<<utilities>>
+----
+
+include::edit_warning.txt[]
+
+include::copyright_info.txt[]
+

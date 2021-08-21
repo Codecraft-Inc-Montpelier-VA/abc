@@ -1,0 +1,169 @@
+
+== Introduction
+
+This document describes the +abc+ program source code and provides 
+instructions for its execution.
+
+The +abc+ program is a simple test program for 
+Simple C/C++ Coroutines using Codecraft's open-source sccor library.
++abc+ runs in a Terminal window on macOS or in a Command window on Windows. 
+(((sccor Library)))
+
+The sccor Library's Simple C/C++ Coroutines implementation  
+supports lightweight cooperative multitasking and provides
+for asynchronous programming through the use of 
+Edisonfootnote:[<<pbh-edison>> is an edition of _Software Practice 
+and Experience_ devoted entirely to the Edison papers.]-inspired, 
+single-threaded, non-preemptive, ring-based coroutines.
+(((Edison)))
+
+This version of +abc+ produces an x86_64 executable running on 
+macOSfootnote:[See <<cc-abc-mac>> for an +abc+ executable 
+that runs on macOS.] or
+Windowsfootnote:[See <<cc-abc-win>> for an +abc.exe+ executable 
+that runs on Windows.].footnote:[A Linux version will be available 
+in a future release,
+with the availability of a Linux version of the sccor library.]
+
+=== How to Read This Document
+
+This document is a
+http://literateprogramming.com[literate program document].
+As such it includes a complete description of both the design and
+implementation of the +abc+ test program for simple C/C++ coroutines.
+Further information on the particular literal programming syntax
+used here is given in <<literate-programming,Literate Programming>>.
+
+=== Background
+
+(((Simple C/C\++ Coroutines)))
+This +abc+ test program was written to verify 64-bit-mode execution 
+of my Simple C/C++ Coroutines running on both macOS and Windows.
+
+In implementing +abc+ as a literate program,
+I hope to explain the design and logic of the program in an order and 
+fashion that facilitates your understanding of the implementation,
+as well as providing all of the code.
+
+(((coroutine statements,+cobegin+)))
+(((coroutine statements,+coresume+)))
+(((coroutine statements,+invoke+)))
+(((coroutine statements,+wait+)))
+(((coroutine statements,+waitEx+)))
+(((coroutine statements,+when+)))
+The coroutines employed in +abc+ are just standard C++ procedures, 
+with the simple addition of a couple of coroutine statements 
+from the sccor library:
+  
+* +cobegin+, to initialize 
+coroutine execution and put one or more coroutines on the multitasking 
+ring, and 
+
+* +coresume+, to perform an unconditional task switch to yield execution
+to the other coroutines on the ring, as appropriate to maintain 
+the behavior and performance profile of 
+the ensemble of executing coroutines.
+
+The +cobegin+ statement blocks further execution of the calling routine
+(usually +main+)
+while the coroutine instances created by +cobegin+ are executing.
+When all coroutine instances have finished their execution, the routine that
+issued the +cobegin+ statement continues its 
+execution in a normal manner.
+
+As an example, +repeatChar+ is a coroutine that writes 
+its input character a specified number of times and returns.
+After each character is written, +repeatChar+ yields
+via a +coresume+ statement.
+
+[source,C]
+----
+void repeatChar( char c, int count ) {
+   for ( i = 0; i < count; i++ ) {
+      putchar( c ) ;
+      coresume() ;
+   }
+}
+----
+
+When executed as the only coroutine instance, with input character `a' 
+and a count of 10, +repeatChar+ produces this string of 10 a's on stdout:
+
+----
+aaaaaaaaaa
+----
+
+<<<
+When two instances of +repeatChar+ are executed together, the first 
+with input `a' and a count of 10 (as before) and a second with input 
+`b' and also a count of 10, their interleaved output is:
+ 
+----
+abababababababababab
+---- 
+
+Each instance of +repeatChar+ acts as an independent task, ouputting its
+designated character.
+By issuing a +coresume+ after outputting its character, the instance allows 
+any another instance to do its thing, in this case outputting its character.
+This leads to the string of interspersed a's and b's of the result.
+
+Here's the +cobegin+ statement to start these two instances:
+
+[source,C]
+----
+cobegin( 2,                            // start 2 coroutines 
+            repeatChar, 2, 'b', 10,    // 2 parameters ('b' and '10')
+            repeatChar, 2, 'a', 10     // 2 parameters ('a' and '10')
+) ;
+----
+
+The second instance executes first, since the coroutines are
+stacked by +cobegin+ until it completes its initialization.
+
+Besides +cobegin+ and +coresume+, the sccor library provides a few 
+optional statements: 
+
+* +invoke+ adds another coroutine to the 
+ring of currently-executing coroutines,
+
+* +wait+ delays a coroutine's execution for at least a specified 
+number of milliseconds while continuing other coroutines,
+
+* +waitEx+ waits for at least a specified number of milliseconds 
+while continuing other coroutines; the waiting period is interrupted 
+if a specified boolean becomes false, and
+
+* +when+ provides a conditional task switch, continuing other coroutines
+until a specified boolean becomes true. 
+ 
+Note that there is no need for a special "coroutine exit" or "coroutine 
+return" command to complete execution of a coroutine.  
+Coroutines complete execution by the ordinary C/C++ procedure behavior, 
+either by a +return+ statement or just "falling off" the end of the function. 
+
+TIP: In our case a coroutine is just an ordinary C/C++ procedure 
+which contains at least one +coresume+ statement.
+
+We'll see examples of these coroutine statements in the implementation 
+of the +abc+ program. 
+
+== +abc+ Execution
+
+Run the +abc+ executable in a macOSfootnote:[Big Sur (11.0), or later,
+is supported.] Terminal or Windows 10 Command window, as appropriate. 
+
+Syntax:
+
+[source,C]
+----
+% abc
+----
+
+There are no options for the +abc+ program. 
+
+Here is output from a run of the +abc+ program on macOS:
+
+image::abc_execution.jpg[height=130,align="left"]
+
+

@@ -1,0 +1,47 @@
+
+[bibliography]
+== References
+[bibliography]
+.Programs
+- [[[cc-abc-mac]]] Cary WR Campbell,
+    'The +abc+ Program'--macOS Version,
+    July 2021,
+    https://drive.google.com/file/d/1tgGFy8SNFteQmVTQsem8LcdW8eirYPCf/view?usp=sharing.
+- [[[cc-abc-win]]] Cary WR Campbell,
+    'The +abc+ Program'--Windows Version,
+    July 2021,
+    Not Released Yet.
+- [[[cc-darts-program]]] Cary WR Campbell,
+    'The +darts+ Literate Program',
+    March 2021,
+    https://drive.google.com/file/d/1qOwo0P0nbFlritH3ha4FHqa6i1VwOTwS/view?usp=sharing.
+- [[[cc-darts-mac]]] Cary WR Campbell,
+    'The +darts+ Program'--macOS Version,
+    March 2021,
+    https://drive.google.com/file/d/1i6dUUyfr_3xP51dZA0D4MIq77n-bd8Un/view?usp=sharing.
+- [[[cc-elevator-program]]] Cary WR Campbell,
+    'The +elevator+ Literate Program',
+    June 2021,
+    https://drive.google.com/file/d/1AIKR9hAKQWzCLRD3tMeD2fknfdw_mq23/view?usp=sharing.    
+- [[[cc-elevator-mac]]] Cary WR Campbell,
+    'The +elevator+ Program'--macOS Version,
+    June 2021,
+    https://drive.google.com/file/d/1Zk0dyyKOYPEWoDlzvhlVwKkxyC1LrOyx/view?usp=sharing.
+- [[[cc-sccor-mac]]] Cary WR Campbell,
+    'The +sccor+ Library'--macOS Version,
+    March 2021,
+    https://drive.google.com/file/d/1ouWwM-mrNjMnHWMJSqTAeb6KbS2Z6aGG/view?usp=sharing.
+- [[[cc-sccor-win]]] Cary WR Campbell,
+    'The +sccor+ Library'--Windows Version,
+    July 2021,
+    To Be Released in July, 2021.
+[bibliography]
+.Articles
+- [[[pbh-edison]]] Per Brinch Hansen, 
+    'Edison--a Multiprocessor Language', 
+    _Software Practice and Experience_ 11, no. 4 (April 1981): 325 - 362.
+
+
+
+
+

@@ -1,0 +1,221 @@
+<<<
+== Implementation
+
+A primary consideration in developing the +abc+ program 
+is to create a simple demonstration using 
+the Simple C/C++ Coroutines in the sccor library.
+
+Another high-level choice is to implement +abc+ as a 
+command-line program, primarily
+for the coding simplicity and to minimize extraneous GUI aspects.
+
+=== +abc+'s +main+ Routine 
+
+The +abc+ program has a rather standard +main+ routine: set up, 
+do something, and take down.
+
+[source,c]
+----
+<<main routine>>=
+int main( int argc, char* argv[] ) {
+   <<set up>>
+   <<do something>>
+   <<take down>>
+}
+----
+
+We'll see the "do something" later, in section 
+xref:mds[+main+'s Do Something] below, followed by the "take down",
+in section xref:mtd[+main+'s Take Down].
+
+First, we'll look at the "set up".
+
+=== +main+'s Set Up
+
+A special value is inserted into the ebx register for comparison later, 
+following execution of the coroutines.
+The ebx register value must be preserved unchanged by coroutine execution.
+
+We are using the sccor library, so we need to include its header.
+
+[source,c]
+----
+<<include files>>=
+#include "sccorlib.h"
+----
+
+We are using +sprintf()+, _etc._, so we need to include the header.
+
+[source,c]
+----
+<<include files>>=
+#include <stdio.h>
+----
+
+[source,c]
+----
+<<set up>>=
+unsigned long _RBX = 0xbbbbbbbbbbbbbbbb ;
+char temp[ 200 ] ;
+asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
+stop = false ;
+sprintf( temp, "\n-> in main (before cobegin): ebx = %08lx.\n", _RBX ) ;
+strprt( temp ) ;
+CR ;
+----
+
++main+ initializes a global boolean variable that signals 
+the +writeLetter+ coroutine instances to stop character outputting 
+and exit.
+The variable is +volatile+ so the compiler doesn't optimize out
+asychronous references to it in the coroutines.
+
+[source,c]
+----
+<<global variables>>=
+volatile bool stop ;
+----
+
++main+ uses a convenience "++CR++" define to generate a newline.
+
+[source,c]
+----
+<<definitions>>=
+#define CR puts( "\r" ) 
+----
+
++main+ uses the +strprt+ utility routine to display a string.
+
+[source,c]
+----
+<<forward references>>=
+void strprt( const char *str_ptr ) ;
+----
+
+[source,c]
+----
+<<utilities>>=
+void strprt( const char *str_ptr ) {
+   while ( *str_ptr ) putchar( *str_ptr++ ) ;
+}
+----
+
+=== +main+'s Do Something.
+
+[[mds]]
++main+ starts two instances of the +writeLetter+ coroutine and 
+one instance of the +counter+ coroutine.
+
+[source,c]
+----
+<<forward references>>=
+void counter( int count ) ;
+void writeLetter( char c ) ;
+----
+
+[source,c]
+----
+<<do something>>=
+cobegin( 3,                              // <1>
+            writeLetter,     1, 'b',     // <2>
+            writeLetter,     1, 'a',     // <3>
+            counter,         1, 10       // <4>
+       ) ;
+CR ;
+----
+<1> Initial coroutine count (``3'').
+<2> One character parameter (``b'').
+<3> One character parameter (``a'').
+<4> One integer parameter (``10'').
+
+The +cobegin+ statement blocks after starting the two coroutines, and 
+remains blocked until after all coroutine instances have ++return++ed.
+
++main+'s +cobegin+ statement creates a new coroutine ring and places 
+the +writeLetter+ ``b'' instance, the +writeLetter+ ``a'' instance,
+and the +counter+ instance on it,
+then blocks awaiting completion of all coroutines on the ring.
+
+This is what the coresume ring looks like following the 
++cobegin+ statement:
+
+image::abc_main_plus_3.png[height=200,align="left"]
+
+The coroutine ring runs clockwise, with execution passing to the 
+next coroutine when the previous coroutine yields with a +coresume+
+call.
+
+A coroutine remains on the ring until it ++return++s (or falls through
+the end of its routine).
+So +main+ will not resume its execution (with the statement following 
+the +cobegin+ statement) until all coroutines have finished.
+
+==== +writeLetter+ Coroutine
+
+Each +writeLetter+ instance writes its designated character and then yields
+with a +coresume+ statement, continuing until stopped by a global 
++stop+ variable.
+
+Here's the +writeLetter+ code:
+
+[source,c]
+----
+<<coroutines>>=
+void writeLetter( char c ) {
+   while ( stop == false ) {
+      putchar( c ) ;
+      coresume() ;
+   }
+}
+----
+
+==== +counter+ Coroutine
+
+The +counter+ instance counts to the specified count, sets the 
+global +stop+ variable to tell the other coroutines to stop, and exits.
+Each time after incrementing its count, +counter+ yields with a +coresume+
+statement.
+
+Here's the +counter+ code:
+
+[source,c]
+----
+<<coroutines>>=
+void counter( int count ) {
+   unsigned long _RBX = 0xb0b0b0b0b0b0b0b0 ;
+   char temp[ 200 ] ;
+   asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
+
+   asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
+   sprintf( temp, "-> in counter (after changing ebx value): ebx = %08lx.\n\n", _RBX ) ;
+   strprt( temp ) ;
+   for ( long i = 0; i < count; i++ ) {
+      coresume() ;
+   }
+   stop = true ;
+}
+----
+
+You will note that +counter+ changes the value in the ebx register, in 
+order to test that the secor coroutine implementation preserves the value
+in the ebx register, as required by the x86_64 ABI.
+
+=== +main+'s Take Down
+
+[[mtd]]
+After all coroutines have finished their executions, processing resumes 
+in +main+ at the statement following the +cobegin+ statement.
+
+Before exiting, +main+ shows the contents of the ebx register.
+The value should be the same as it was prior to starting the coroutines.
+
+[source,c]
+----
+<<take down>>=
+asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
+sprintf( temp, "\n-> in main (after cobegin): ebx = %08lx.\n\n", _RBX ) ;
+strprt( temp ) ;
+return 0 ;
+----
+
+

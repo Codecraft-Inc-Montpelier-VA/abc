@@ -1,0 +1,56 @@
+
+== Epilogue
+
+This document has described the +abc+ program, its source code, and
+its execution.
+
+The +abc+ program is most certainly a simple program,
+created as an initial test case for the Simple C/C++ Coroutines 
+using Codecraft's open-source sccor library, running on 
+macOS and Windows. 
+
+There are a couple of more interesting and ambitious coroutine test programs
+available as literate programs and macOS executables.
+
+=== The +darts+ Program
+
+The +darts+ program is an interactive visual test program for 
+Simple C/C++ Coroutines using Codecraft's open-source sccor library.
+The +darts+ program can demonstrate the simultaneous execution of 
+hundreds of coroutines with elapsed times in the microseconds.
+
++darts+ runs in a macOS Terminal window or Windows
+Command window as a command-line executable.
+
+See <<cc-darts-program>> for the +darts+ literate program.
+
+See <<cc-darts-mac>> for the macOS +darts+ executable that was 
+tangled and compiled from the +darts+ literate program.
+
+=== The +elevator+ Program
+
+The +elevator+ program is a visual and interactive test program that 
+simulates a bank of elevators.
+It too is a Simple C/C++ Coroutines test program, one which provides
+a more extensive demonstration of the coroutines' capabilities and
+performance.
+
++elevator+ runs in a macOS Terminal window or Windows
+Command window as a command-line executable.
+
+See <<cc-elevator-program>> for the +elevator+ literate program.
+
+See <<cc-elevator-mac>> for the macOS +elevator+ executable that was 
+tangled and compiled from the +elevator+ literate program.
+
+=== The sccor Library
+
+I hope to have piqued your interest in the multi-platform 
+Simple C/C++ Coroutines available with Codecraft's open-source sccor library.
+
+The sccor library is currently available in macOS and Windows versions.
+
+See <<cc-sccor-mac>> for the macOS version.
+
+See <<cc-sccor-win>> for the Windows version.
+

@@ -1,0 +1,61 @@
+[appendix]
+== Literate Programming [[literate-programming]]
+
+The source for this document conforms to
+http://www.asciidoc.org[asciidoc] syntax.
+This document is also a
+http://www.literateprogramming.com/[literate program].
+The source code for the implementation is included directly in the document
+source and the build process extracts the source code which is then given to
+the +gcc+ program.
+This process is known as __tangle__ing.
+The program,
+http://repos.modelrealization.com/cgi-bin/fossil/mrtools/[+atangle+],
+is available to extract source code from the document source
+and the +asciidoc+ tool chain can be used to produce a variety
+of different output formats, although PDF is the intended choice.
+
+The goal of a literate program is to explain the logic of the
+program in an order and fashion that facilitates human understanding of the
+program and then _tangle_ the document source to obtain
+the code in an order suitable for a language processor.
+Briefly,
+code is extracted from the literate source by
+defining a series of _chunks_ that contain the source.
+A chunk is _defined_ by including its name as:
+
+........................
+<<chunk name>>=
+........................
+
+The trailing +=+ sign denotes a definition.
+A chunk definition ends at the end of the source block
+or at the beginning of another chunk definition.
+A chunk may be _referenced_ from within a chunk definition by
+using its name without the trailing +=+ sign, as in:
+
+........................
+<<chunk definition>>=
+    <<chunk reference>>
+........................
+
+Chunk names are arbitrary strings.
+Multiple definitions with the same name are simply concatenated in the order
+they are encountered.
+There are one or more _root chunks_ which form the conceptual tree
+for the source files that are contained in the literate source.
+By convention, root chunks are named the same as the file name to
+which they will be tangled.
+Tangling is then the operation of starting at a root chunk and
+recursively substituting the definition for the chunk references that
+are encountered.
+
+For readers that are not familiar with the literate style and
+who are adept at reading source code directly,
+the chunk definitions and reordering
+provided by the tangle operation can be a bit disconcerting at first.
+You can, of course, examine the tangled source output,
+but if you read the program as a document,
+you will have to trust that the
+author managed to arrange the chunk definitions and references in
+a manner so that the tangled output is in an acceptable order.

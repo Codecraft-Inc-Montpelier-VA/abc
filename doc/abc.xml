@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+
+<article lang="en">
+<articleinfo>
+    <title>The <literal>abc</literal> Program</title>
+<subtitle>
+    A Simple Test of Simple C/C++ Coroutines
+</subtitle>
+<authorgroup>
+  <author>
+    <firstname>Cary</firstname>
+    <surname>Campbell</surname>
+  </author>
+</authorgroup>
+<copyright>
+  <year>2021</year>
+  <holder>
+      Codecraft, Inc.
+  </holder>
+</copyright>
+<legalnotice>
+  <title>
+      Legal Notices and Information
+  </title>
+  <para>
+This document is copyrighted 2021 Codecraft, Inc.
+The following terms apply to all files associated with the software unless
+explicitly disclaimed in individual files.
+  </para>
+
+  <para>
+The authors hereby grant permission to use, copy, modify, distribute,
+and license this software and its documentation for any purpose, provided
+that existing copyright notices are retained in all copies and that this
+notice is included verbatim in any distributions. No written agreement,
+license, or royalty fee is required for any of the authorized uses.
+Modifications to this software may be copyrighted by their authors and
+need not follow the licensing terms described here, provided that the
+new terms are clearly indicated on the first page of each file where
+they apply.
+  </para>
+
+  <para>
+IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING
+OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES
+THEREOF, EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+  </para>
+
+  <para>
+THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,
+OR MODIFICATIONS.
+  </para>
+
+  <para>
+GOVERNMENT USE: If you are acquiring this software on behalf of the
+U.S. government, the Government shall have only "Restricted Rights"
+in the software and related documentation as defined in the Federal
+Acquisition Regulations (FARs) in Clause 52.227.19 (c) (2).  If you
+are acquiring the software on behalf of the Department of Defense,
+the software shall be classified as "Commercial Computer Software"
+and the Government shall have only "Restricted Rights" as defined in
+Clause 252.227-7013 (c) (1) of DFARs.  Notwithstanding the foregoing,
+the authors grant the U.S. Government and others acting in its behalf
+permission to use and distribute the software in accordance with the
+terms specified in this license.
+  </para>
+</legalnotice>
+<!--
+  article-docinfo.xml
+  This file contains the revision history.
+  Follow the pattern of the XML to add the information.
+-->
+<revhistory>
+  <revision>
+    <revnumber>1.0</revnumber>
+    <date>July 21, 2021</date>
+    <authorinitials>CWRC</authorinitials>
+    <revremark>
+      First version of abc as a literate program.
+    </revremark>
+  </revision>
+</revhistory>
+</articleinfo>
+<section id="_introduction">
+<title>Introduction</title>
+<simpara>This document describes the <literal>abc</literal> program source code and provides
+instructions for its execution.</simpara>
+<simpara>The <literal>abc</literal> program is a simple test program for
+Simple C/C++ Coroutines using Codecraft&#8217;s open-source sccor library.
+<literal>abc</literal> runs in a Terminal window on macOS or in a Command window on Windows.
+<indexterm>
+  <primary>sccor Library</primary>
+</indexterm></simpara>
+<simpara>The sccor Library&#8217;s Simple C/C++ Coroutines implementation
+supports lightweight cooperative multitasking and provides
+for asynchronous programming through the use of
+Edison<footnote><simpara><xref linkend="pbh-edison"/> is an edition of <emphasis>Software Practice
+and Experience</emphasis> devoted entirely to the Edison papers.</simpara></footnote>-inspired,
+single-threaded, non-preemptive, ring-based coroutines.
+<indexterm>
+  <primary>Edison</primary>
+</indexterm></simpara>
+<simpara>This version of <literal>abc</literal> produces an x86_64 executable running on
+macOS<footnote><simpara>See <xref linkend="cc-abc-mac"/> for an <literal>abc</literal> executable
+that runs on macOS.</simpara></footnote> or
+Windows<footnote><simpara>See <xref linkend="cc-abc-win"/> for an <literal>abc.exe</literal> executable
+that runs on Windows.</simpara></footnote>.<footnote><simpara>A Linux version will be available
+in a future release,
+with the availability of a Linux version of the sccor library.</simpara></footnote></simpara>
+<section id="_how_to_read_this_document">
+<title>How to Read This Document</title>
+<simpara>This document is a
+<ulink url="http://literateprogramming.com">literate program document</ulink>.
+As such it includes a complete description of both the design and
+implementation of the <literal>abc</literal> test program for simple C/C++ coroutines.
+Further information on the particular literal programming syntax
+used here is given in <link linkend="literate-programming">Literate Programming</link>.</simpara>
+</section>
+<section id="_background">
+<title>Background</title>
+<simpara><indexterm>
+  <primary>Simple C/C++ Coroutines</primary>
+</indexterm>
+This <literal>abc</literal> test program was written to verify 64-bit-mode execution
+of my Simple C/C++ Coroutines running on both macOS and Windows.</simpara>
+<simpara>In implementing <literal>abc</literal> as a literate program,
+I hope to explain the design and logic of the program in an order and
+fashion that facilitates your understanding of the implementation,
+as well as providing all of the code.</simpara>
+<simpara><indexterm>
+  <primary>coroutine statements</primary><secondary><literal>cobegin</literal></secondary>
+</indexterm>
+<indexterm>
+  <primary><literal>cobegin</literal></primary>
+</indexterm>
+<indexterm>
+  <primary>coroutine statements</primary><secondary><literal>coresume</literal></secondary>
+</indexterm>
+<indexterm>
+  <primary><literal>coresume</literal></primary>
+</indexterm>
+<indexterm>
+  <primary>coroutine statements</primary><secondary><literal>invoke</literal></secondary>
+</indexterm>
+<indexterm>
+  <primary><literal>invoke</literal></primary>
+</indexterm>
+<indexterm>
+  <primary>coroutine statements</primary><secondary><literal>wait</literal></secondary>
+</indexterm>
+<indexterm>
+  <primary><literal>wait</literal></primary>
+</indexterm>
+<indexterm>
+  <primary>coroutine statements</primary><secondary><literal>waitEx</literal></secondary>
+</indexterm>
+<indexterm>
+  <primary><literal>waitEx</literal></primary>
+</indexterm>
+<indexterm>
+  <primary>coroutine statements</primary><secondary><literal>when</literal></secondary>
+</indexterm>
+<indexterm>
+  <primary><literal>when</literal></primary>
+</indexterm>
+The coroutines employed in <literal>abc</literal> are just standard C++ procedures,
+with the simple addition of a couple of coroutine statements
+from the sccor library:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>
+<literal>cobegin</literal>, to initialize
+coroutine execution and put one or more coroutines on the multitasking
+ring, and
+</simpara>
+</listitem>
+<listitem>
+<simpara>
+<literal>coresume</literal>, to perform an unconditional task switch to yield execution
+to the other coroutines on the ring, as appropriate to maintain
+the behavior and performance profile of
+the ensemble of executing coroutines.
+</simpara>
+</listitem>
+</itemizedlist>
+<simpara>The <literal>cobegin</literal> statement blocks further execution of the calling routine
+(usually <literal>main</literal>)
+while the coroutine instances created by <literal>cobegin</literal> are executing.
+When all coroutine instances have finished their execution, the routine that
+issued the <literal>cobegin</literal> statement continues its
+execution in a normal manner.</simpara>
+<simpara>As an example, <literal>repeatChar</literal> is a coroutine that writes
+its input character a specified number of times and returns.
+After each character is written, <literal>repeatChar</literal> yields
+via a <literal>coresume</literal> statement.</simpara>
+<programlisting language="C" linenumbering="unnumbered">void repeatChar( char c, int count ) {
+   for ( i = 0; i &lt; count; i++ ) {
+      putchar( c ) ;
+      coresume() ;
+   }
+}</programlisting>
+<simpara>When executed as the only coroutine instance, with input character &#8216;a&#8217;
+and a count of 10, <literal>repeatChar</literal> produces this string of 10 a&#8217;s on stdout:</simpara>
+<screen>aaaaaaaaaa</screen>
+<simpara><?asciidoc-pagebreak?></simpara>
+<simpara>When two instances of <literal>repeatChar</literal> are executed together, the first
+with input &#8216;a&#8217; and a count of 10 (as before) and a second with input
+&#8216;b&#8217; and also a count of 10, their interleaved output is:</simpara>
+<screen>abababababababababab</screen>
+<simpara>Each instance of <literal>repeatChar</literal> acts as an independent task, ouputting its
+designated character.
+By issuing a <literal>coresume</literal> after outputting its character, the instance allows
+any another instance to do its thing, in this case outputting its character.
+This leads to the string of interspersed a&#8217;s and b&#8217;s of the result.</simpara>
+<simpara>Here&#8217;s the <literal>cobegin</literal> statement to start these two instances:</simpara>
+<programlisting language="C" linenumbering="unnumbered">cobegin( 2,                            // start 2 coroutines
+            repeatChar, 2, 'b', 10,    // 2 parameters ('b' and '10')
+            repeatChar, 2, 'a', 10     // 2 parameters ('a' and '10')
+) ;</programlisting>
+<simpara>The second instance executes first, since the coroutines are
+stacked by <literal>cobegin</literal> until it completes its initialization.</simpara>
+<simpara>Besides <literal>cobegin</literal> and <literal>coresume</literal>, the sccor library provides a few
+optional statements:</simpara>
+<itemizedlist>
+<listitem>
+<simpara>
+<literal>invoke</literal> adds another coroutine to the
+ring of currently-executing coroutines,
+</simpara>
+</listitem>
+<listitem>
+<simpara>
+<literal>wait</literal> delays a coroutine&#8217;s execution for at least a specified
+number of milliseconds while continuing other coroutines,
+</simpara>
+</listitem>
+<listitem>
+<simpara>
+<literal>waitEx</literal> waits for at least a specified number of milliseconds
+while continuing other coroutines; the waiting period is interrupted
+if a specified boolean becomes false, and
+</simpara>
+</listitem>
+<listitem>
+<simpara>
+<literal>when</literal> provides a conditional task switch, continuing other coroutines
+until a specified boolean becomes true.
+</simpara>
+</listitem>
+</itemizedlist>
+<simpara>Note that there is no need for a special "coroutine exit" or "coroutine
+return" command to complete execution of a coroutine.
+Coroutines complete execution by the ordinary C/C++ procedure behavior,
+either by a <literal>return</literal> statement or just "falling off" the end of the function.</simpara>
+<tip><simpara>In our case a coroutine is just an ordinary C/C++ procedure
+which contains at least one <literal>coresume</literal> statement.</simpara></tip>
+<simpara>We&#8217;ll see examples of these coroutine statements in the implementation
+of the <literal>abc</literal> program.</simpara>
+</section>
+</section>
+<section id="_literal_abc_literal_execution">
+<title><literal>abc</literal> Execution</title>
+<simpara>Run the <literal>abc</literal> executable in a macOS<footnote><simpara>Big Sur (11.0), or later,
+is supported.</simpara></footnote> Terminal or Windows 10 Command window, as appropriate.</simpara>
+<simpara>Syntax:</simpara>
+<programlisting language="C" linenumbering="unnumbered">% abc</programlisting>
+<simpara>There are no options for the <literal>abc</literal> program.</simpara>
+<simpara>Here is output from a run of the <literal>abc</literal> program on macOS:</simpara>
+<informalfigure>
+<mediaobject>
+  <imageobject>
+  <imagedata fileref="abc_execution.jpg" contentdepth="130" align="left"/>
+  </imageobject>
+  <textobject><phrase>abc_execution.jpg</phrase></textobject>
+</mediaobject>
+</informalfigure>
+<simpara><?asciidoc-pagebreak?></simpara>
+</section>
+<section id="_implementation">
+<title>Implementation</title>
+<simpara>A primary consideration in developing the <literal>abc</literal> program
+is to create a simple demonstration using
+the Simple C/C++ Coroutines in the sccor library.</simpara>
+<simpara>Another high-level choice is to implement <literal>abc</literal> as a
+command-line program, primarily
+for the coding simplicity and to minimize extraneous GUI aspects.</simpara>
+<section id="_literal_abc_literal_s_literal_main_literal_routine">
+<title><literal>abc</literal>'s <literal>main</literal> Routine</title>
+<simpara>The <literal>abc</literal> program has a rather standard <literal>main</literal> routine: set up,
+do something, and take down.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;main routine&gt;&gt;=
+int main( int argc, char* argv[] ) {
+   &lt;&lt;set up&gt;&gt;
+   &lt;&lt;do something&gt;&gt;
+   &lt;&lt;take down&gt;&gt;
+}</programlisting>
+<simpara>We&#8217;ll see the "do something" later, in section
+<link linkend="mds"><literal>main</literal>'s Do Something</link> below, followed by the "take down",
+in section <link linkend="mtd"><literal>main</literal>'s Take Down</link>.</simpara>
+<simpara>First, we&#8217;ll look at the "set up".</simpara>
+</section>
+<section id="_literal_main_literal_s_set_up">
+<title><literal>main</literal>'s Set Up</title>
+<simpara>A special value is inserted into the ebx register for comparison later,
+following execution of the coroutines.
+The ebx register value must be preserved unchanged by coroutine execution.</simpara>
+<simpara>We are using the sccor library, so we need to include its header.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;include files&gt;&gt;=
+#include "sccorlib.h"</programlisting>
+<simpara>We are using <literal>sprintf()</literal>, <emphasis>etc.</emphasis>, so we need to include the header.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;include files&gt;&gt;=
+#include &lt;stdio.h&gt;</programlisting>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;set up&gt;&gt;=
+unsigned long _RBX = 0xbbbbbbbbbbbbbbbb ;
+char temp[ 200 ] ;
+asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
+stop = false ;
+sprintf( temp, "\n-&gt; in main (before cobegin): ebx = %08lx.\n", _RBX ) ;
+strprt( temp ) ;
+CR ;</programlisting>
+<simpara><literal>main</literal> initializes a global boolean variable that signals
+the <literal>writeLetter</literal> coroutine instances to stop character outputting
+and exit.
+The variable is <literal>volatile</literal> so the compiler doesn&#8217;t optimize out
+asychronous references to it in the coroutines.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;global variables&gt;&gt;=
+volatile bool stop ;</programlisting>
+<simpara><literal>main</literal> uses a convenience "<literal>CR</literal>" define to generate a newline.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;definitions&gt;&gt;=
+#define CR puts( "\r" )</programlisting>
+<simpara><literal>main</literal> uses the <literal>strprt</literal> utility routine to display a string.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;forward references&gt;&gt;=
+void strprt( const char *str_ptr ) ;</programlisting>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;utilities&gt;&gt;=
+void strprt( const char *str_ptr ) {
+   while ( *str_ptr ) putchar( *str_ptr++ ) ;
+}</programlisting>
+</section>
+<section id="_literal_main_literal_s_do_something">
+<title><literal>main</literal>'s Do Something.</title>
+<simpara id="mds"><literal>main</literal> starts two instances of the <literal>writeLetter</literal> coroutine and
+one instance of the <literal>counter</literal> coroutine.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;forward references&gt;&gt;=
+void counter( int count ) ;
+void writeLetter( char c ) ;</programlisting>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;do something&gt;&gt;=
+cobegin( 3,                              // <co id="CO1-1"/>
+            writeLetter,     1, 'b',     // <co id="CO1-2"/>
+            writeLetter,     1, 'a',     // <co id="CO1-3"/>
+            counter,         1, 10       // <co id="CO1-4"/>
+       ) ;
+CR ;</programlisting>
+<calloutlist>
+<callout arearefs="CO1-1">
+<para>
+Initial coroutine count (&#8220;3&#8221;).
+</para>
+</callout>
+<callout arearefs="CO1-2">
+<para>
+One character parameter (&#8220;b&#8221;).
+</para>
+</callout>
+<callout arearefs="CO1-3">
+<para>
+One character parameter (&#8220;a&#8221;).
+</para>
+</callout>
+<callout arearefs="CO1-4">
+<para>
+One integer parameter (&#8220;10&#8221;).
+</para>
+</callout>
+</calloutlist>
+<simpara>The <literal>cobegin</literal> statement blocks after starting the two coroutines, and
+remains blocked until after all coroutine instances have <literal>return</literal>ed.</simpara>
+<simpara><literal>main</literal>'s <literal>cobegin</literal> statement creates a new coroutine ring and places
+the <literal>writeLetter</literal> &#8220;b&#8221; instance, the <literal>writeLetter</literal> &#8220;a&#8221; instance,
+and the <literal>counter</literal> instance on it,
+then blocks awaiting completion of all coroutines on the ring.</simpara>
+<simpara>This is what the coresume ring looks like following the
+<literal>cobegin</literal> statement:</simpara>
+<informalfigure>
+<mediaobject>
+  <imageobject>
+  <imagedata fileref="abc_main_plus_3.png" contentdepth="200" align="left"/>
+  </imageobject>
+  <textobject><phrase>abc_main_plus_3.png</phrase></textobject>
+</mediaobject>
+</informalfigure>
+<simpara>The coroutine ring runs clockwise, with execution passing to the
+next coroutine when the previous coroutine yields with a <literal>coresume</literal>
+call.</simpara>
+<simpara>A coroutine remains on the ring until it <literal>return</literal>s (or falls through
+the end of its routine).
+So <literal>main</literal> will not resume its execution (with the statement following
+the <literal>cobegin</literal> statement) until all coroutines have finished.</simpara>
+<section id="_literal_writeletter_literal_coroutine">
+<title><literal>writeLetter</literal> Coroutine</title>
+<simpara>Each <literal>writeLetter</literal> instance writes its designated character and then yields
+with a <literal>coresume</literal> statement, continuing until stopped by a global
+<literal>stop</literal> variable.</simpara>
+<simpara>Here&#8217;s the <literal>writeLetter</literal> code:</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;coroutines&gt;&gt;=
+void writeLetter( char c ) {
+   while ( stop == false ) {
+      putchar( c ) ;
+      coresume() ;
+   }
+}</programlisting>
+</section>
+<section id="_literal_counter_literal_coroutine">
+<title><literal>counter</literal> Coroutine</title>
+<simpara>The <literal>counter</literal> instance counts to the specified count, sets the
+global <literal>stop</literal> variable to tell the other coroutines to stop, and exits.
+Each time after incrementing its count, <literal>counter</literal> yields with a <literal>coresume</literal>
+statement.</simpara>
+<simpara>Here&#8217;s the <literal>counter</literal> code:</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;coroutines&gt;&gt;=
+void counter( int count ) {
+   unsigned long _RBX = 0xb0b0b0b0b0b0b0b0 ;
+   char temp[ 200 ] ;
+   asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
+
+   asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
+   sprintf( temp, "-&gt; in counter (after changing ebx value): ebx = %08lx.\n\n", _RBX ) ;
+   strprt( temp ) ;
+   for ( long i = 0; i &lt; count; i++ ) {
+      coresume() ;
+   }
+   stop = true ;
+}</programlisting>
+<simpara>You will note that <literal>counter</literal> changes the value in the ebx register, in
+order to test that the secor coroutine implementation preserves the value
+in the ebx register, as required by the x86_64 ABI.</simpara>
+</section>
+</section>
+<section id="_literal_main_literal_s_take_down">
+<title><literal>main</literal>'s Take Down</title>
+<simpara id="mtd">After all coroutines have finished their executions, processing resumes
+in <literal>main</literal> at the statement following the <literal>cobegin</literal> statement.</simpara>
+<simpara>Before exiting, <literal>main</literal> shows the contents of the ebx register.
+The value should be the same as it was prior to starting the coroutines.</simpara>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;take down&gt;&gt;=
+asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
+sprintf( temp, "\n-&gt; in main (after cobegin): ebx = %08lx.\n\n", _RBX ) ;
+strprt( temp ) ;
+return 0 ;</programlisting>
+</section>
+</section>
+<section id="_code_layout">
+<title>Code Layout</title>
+<simpara>In literate programming terminology,
+a <emphasis>chunk</emphasis> is a named part of the final program.
+The program chunks form a tree and the root of that tree
+is named <emphasis>\*</emphasis> by default.
+We follow the convention of naming the root the same as the output
+file name.
+There is just a single root in this literate program,
+the <literal>abc.cpp</literal> file.
+The process of extracting the program tree formed by the chunks is
+called <emphasis>tangle</emphasis>.
+The program, <literal>atangle</literal>, extracts each root chunk to produce
+the corresponding C/C++ source file.</simpara>
+<section id="_literal_abc_cpp_literal">
+<title><literal>abc.cpp</literal></title>
+<programlisting language="c" linenumbering="unnumbered">&lt;&lt;abc.cpp&gt;&gt;=
+&lt;&lt;edit warning&gt;&gt;
+&lt;&lt;copyright info&gt;&gt;
+/*
+ *++
+ * Project:
+ *   +abc+ -- a simple test program for coroutines.  &lt;by Cary WR Campbell&gt;
+ *
+ * Module:
+ *   +abc+ executable for macOS or Windows.
+ *--
+ */
+/*
+ * Include files
+ */
+&lt;&lt;include files&gt;&gt;
+/*
+ * Definitions
+ */
+&lt;&lt;definitions&gt;&gt;
+/*
+ * Variables
+ */
+&lt;&lt;global variables&gt;&gt;
+/*
+ * Forward References
+ */
+&lt;&lt;forward references&gt;&gt;
+/*
+ * Main Routine
+ */
+&lt;&lt;main routine&gt;&gt;
+/*
+ * Coroutines
+ */
+&lt;&lt;coroutines&gt;&gt;
+/*
+ * Utility Routines
+ */
+&lt;&lt;utilities&gt;&gt;</programlisting>
+</section>
+<section id="_edit_warning">
+<title>Edit Warning</title>
+<simpara>We want to make sure to warn readers that the source code is generated and
+not manually written.</simpara>
+<screen>&lt;&lt;edit warning&gt;&gt;=
+/*
+ * DO NOT EDIT THIS FILE!
+ * THIS FILE IS AUTOMATICALLY GENERATED FROM A LITERATE PROGRAM SOURCE FILE.
+ */</screen>
+</section>
+<section id="_copyright_information">
+<title>Copyright Information</title>
+<simpara>The following is copyright and licensing information.</simpara>
+<programlisting language="tcl" linenumbering="unnumbered">&lt;&lt;copyright info&gt;&gt;=
+/*
+ * This software is copyrighted (C) 2003 - 2021 by Codecraft, Inc.
+ * The following terms apply to all files associated with the software unless
+ * explicitly disclaimed in individual files.
+ *
+ * The authors hereby grant permission to use, copy, modify, distribute,
+ * and license this software and its documentation for any purpose, provided
+ * that existing copyright notices are retained in all copies and that this
+ * notice is included verbatim in any distributions. No written agreement,
+ * license, or royalty fee is required for any of the authorized uses.
+ * Modifications to this software may be copyrighted by their authors and
+ * need not follow the licensing terms described here, provided that the
+ * new terms are clearly indicated on the first page of each file where
+ * they apply.
+ *
+ * IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING
+ * OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES
+ * THEREOF, EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+ * IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE
+ * NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,
+ * OR MODIFICATIONS.
+ *
+ * GOVERNMENT USE: If you are acquiring this software on behalf of the
+ * U.S. government, the Government shall have only "Restricted Rights"
+ * in the software and related documentation as defined in the Federal
+ * Acquisition Regulations (FARs) in Clause 52.227.19 (c) (2).  If you
+ * are acquiring the software on behalf of the Department of Defense,
+ * the software shall be classified as "Commercial Computer Software"
+ * and the Government shall have only "Restricted Rights" as defined in
+ * Clause 252.227-7013 (c) (1) of DFARs.  Notwithstanding the foregoing,
+ * the authors grant the U.S. Government and others acting in its behalf
+ * permission to use and distribute the software in accordance with the
+ * terms specified in this license.
+ */</programlisting>
+</section>
+</section>
+<section id="_epilogue">
+<title>Epilogue</title>
+<simpara>This document has described the <literal>abc</literal> program, its source code, and
+its execution.</simpara>
+<simpara>The <literal>abc</literal> program is most certainly a simple program,
+created as an initial test case for the Simple C/C++ Coroutines
+using Codecraft&#8217;s open-source sccor library, running on
+macOS and Windows.</simpara>
+<simpara>There are a couple of more interesting and ambitious coroutine test programs
+available as literate programs and macOS executables.</simpara>
+<section id="_the_literal_darts_literal_program">
+<title>The <literal>darts</literal> Program</title>
+<simpara>The <literal>darts</literal> program is an interactive visual test program for
+Simple C/C++ Coroutines using Codecraft&#8217;s open-source sccor library.
+The <literal>darts</literal> program can demonstrate the simultaneous execution of
+hundreds of coroutines with elapsed times in the microseconds.</simpara>
+<simpara><literal>darts</literal> runs in a macOS Terminal window or Windows
+Command window as a command-line executable.</simpara>
+<simpara>See <xref linkend="cc-darts-program"/> for the <literal>darts</literal> literate program.</simpara>
+<simpara>See <xref linkend="cc-darts-mac"/> for the macOS <literal>darts</literal> executable that was
+tangled and compiled from the <literal>darts</literal> literate program.</simpara>
+</section>
+<section id="_the_literal_elevator_literal_program">
+<title>The <literal>elevator</literal> Program</title>
+<simpara>The <literal>elevator</literal> program is a visual and interactive test program that
+simulates a bank of elevators.
+It too is a Simple C/C++ Coroutines test program, one which provides
+a more extensive demonstration of the coroutines' capabilities and
+performance.</simpara>
+<simpara><literal>elevator</literal> runs in a macOS Terminal window or Windows
+Command window as a command-line executable.</simpara>
+<simpara>See <xref linkend="cc-elevator-program"/> for the <literal>elevator</literal> literate program.</simpara>
+<simpara>See <xref linkend="cc-elevator-mac"/> for the macOS <literal>elevator</literal> executable that was
+tangled and compiled from the <literal>elevator</literal> literate program.</simpara>
+</section>
+<section id="_the_sccor_library">
+<title>The sccor Library</title>
+<simpara>I hope to have piqued your interest in the multi-platform
+Simple C/C++ Coroutines available with Codecraft&#8217;s open-source sccor library.</simpara>
+<simpara>The sccor library is currently available in macOS and Windows versions.</simpara>
+<simpara>See <xref linkend="cc-sccor-mac"/> for the macOS version.</simpara>
+<simpara>See <xref linkend="cc-sccor-win"/> for the Windows version.</simpara>
+</section>
+</section>
+<bibliography id="_references">
+<title>References</title>
+<bibliodiv><title>Programs</title>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-abc-mac" xreflabel="[cc-abc-mac]"/>[cc-abc-mac] Cary WR Campbell,
+    <emphasis>The <literal>abc</literal> Program</emphasis>--macOS Version,
+    July 2021,
+    <ulink url="https://drive.google.com/file/d/1tgGFy8SNFteQmVTQsem8LcdW8eirYPCf/view?usp=sharing">https://drive.google.com/file/d/1tgGFy8SNFteQmVTQsem8LcdW8eirYPCf/view?usp=sharing</ulink>.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-abc-win" xreflabel="[cc-abc-win]"/>[cc-abc-win] Cary WR Campbell,
+    <emphasis>The <literal>abc</literal> Program</emphasis>--Windows Version,
+    July 2021,
+    Not Released Yet.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-darts-program" xreflabel="[cc-darts-program]"/>[cc-darts-program] Cary WR Campbell,
+    <emphasis>The <literal>darts</literal> Literate Program</emphasis>,
+    March 2021,
+    <ulink url="https://drive.google.com/file/d/1qOwo0P0nbFlritH3ha4FHqa6i1VwOTwS/view?usp=sharing">https://drive.google.com/file/d/1qOwo0P0nbFlritH3ha4FHqa6i1VwOTwS/view?usp=sharing</ulink>.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-darts-mac" xreflabel="[cc-darts-mac]"/>[cc-darts-mac] Cary WR Campbell,
+    <emphasis>The <literal>darts</literal> Program</emphasis>--macOS Version,
+    March 2021,
+    <ulink url="https://drive.google.com/file/d/1i6dUUyfr_3xP51dZA0D4MIq77n-bd8Un/view?usp=sharing">https://drive.google.com/file/d/1i6dUUyfr_3xP51dZA0D4MIq77n-bd8Un/view?usp=sharing</ulink>.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-elevator-program" xreflabel="[cc-elevator-program]"/>[cc-elevator-program] Cary WR Campbell,
+    <emphasis>The <literal>elevator</literal> Literate Program</emphasis>,
+    June 2021,
+    <ulink url="https://drive.google.com/file/d/1AIKR9hAKQWzCLRD3tMeD2fknfdw_mq23/view?usp=sharing">https://drive.google.com/file/d/1AIKR9hAKQWzCLRD3tMeD2fknfdw_mq23/view?usp=sharing</ulink>.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-elevator-mac" xreflabel="[cc-elevator-mac]"/>[cc-elevator-mac] Cary WR Campbell,
+    <emphasis>The <literal>elevator</literal> Program</emphasis>--macOS Version,
+    June 2021,
+    <ulink url="https://drive.google.com/file/d/1Zk0dyyKOYPEWoDlzvhlVwKkxyC1LrOyx/view?usp=sharing">https://drive.google.com/file/d/1Zk0dyyKOYPEWoDlzvhlVwKkxyC1LrOyx/view?usp=sharing</ulink>.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-sccor-mac" xreflabel="[cc-sccor-mac]"/>[cc-sccor-mac] Cary WR Campbell,
+    <emphasis>The <literal>sccor</literal> Library</emphasis>--macOS Version,
+    March 2021,
+    <ulink url="https://drive.google.com/file/d/1ouWwM-mrNjMnHWMJSqTAeb6KbS2Z6aGG/view?usp=sharing">https://drive.google.com/file/d/1ouWwM-mrNjMnHWMJSqTAeb6KbS2Z6aGG/view?usp=sharing</ulink>.
+</bibliomisc>
+</bibliomixed>
+<bibliomixed>
+<bibliomisc>
+<anchor id="cc-sccor-win" xreflabel="[cc-sccor-win]"/>[cc-sccor-win] Cary WR Campbell,
+    <emphasis>The <literal>sccor</literal> Library</emphasis>--Windows Version,
+    July 2021,
+    To Be Released in July, 2021.
+</bibliomisc>
+</bibliomixed>
+</bibliodiv>
+<bibliodiv><title>Articles</title>
+<bibliomixed>
+<bibliomisc>
+<anchor id="pbh-edison" xreflabel="[pbh-edison]"/>[pbh-edison] Per Brinch Hansen,
+    <emphasis>Edison&#8212;a Multiprocessor Language</emphasis>,
+    <emphasis>Software Practice and Experience</emphasis> 11, no. 4 (April 1981): 325 - 362.
+</bibliomisc>
+</bibliomixed>
+</bibliodiv>
+</bibliography>
+<appendix id="_literate_programming_anchor_id_literate_programming_xreflabel_literate_programming">
+<title>Literate Programming <anchor id="literate-programming" xreflabel="[literate-programming]"/></title>
+<simpara>The source for this document conforms to
+<ulink url="http://www.asciidoc.org">asciidoc</ulink> syntax.
+This document is also a
+<ulink url="http://www.literateprogramming.com/">literate program</ulink>.
+The source code for the implementation is included directly in the document
+source and the build process extracts the source code which is then given to
+the <literal>gcc</literal> program.
+This process is known as <emphasis>tangle</emphasis>ing.
+The program,
+<ulink url="http://repos.modelrealization.com/cgi-bin/fossil/mrtools/"><literal>atangle</literal></ulink>,
+is available to extract source code from the document source
+and the <literal>asciidoc</literal> tool chain can be used to produce a variety
+of different output formats, although PDF is the intended choice.</simpara>
+<simpara>The goal of a literate program is to explain the logic of the
+program in an order and fashion that facilitates human understanding of the
+program and then <emphasis>tangle</emphasis> the document source to obtain
+the code in an order suitable for a language processor.
+Briefly,
+code is extracted from the literate source by
+defining a series of <emphasis>chunks</emphasis> that contain the source.
+A chunk is <emphasis>defined</emphasis> by including its name as:</simpara>
+<literallayout class="monospaced">&lt;&lt;chunk name&gt;&gt;=</literallayout>
+<simpara>The trailing <literal>=</literal> sign denotes a definition.
+A chunk definition ends at the end of the source block
+or at the beginning of another chunk definition.
+A chunk may be <emphasis>referenced</emphasis> from within a chunk definition by
+using its name without the trailing <literal>=</literal> sign, as in:</simpara>
+<literallayout class="monospaced">&lt;&lt;chunk definition&gt;&gt;=
+    &lt;&lt;chunk reference&gt;&gt;</literallayout>
+<simpara>Chunk names are arbitrary strings.
+Multiple definitions with the same name are simply concatenated in the order
+they are encountered.
+There are one or more <emphasis>root chunks</emphasis> which form the conceptual tree
+for the source files that are contained in the literate source.
+By convention, root chunks are named the same as the file name to
+which they will be tangled.
+Tangling is then the operation of starting at a root chunk and
+recursively substituting the definition for the chunk references that
+are encountered.</simpara>
+<simpara>For readers that are not familiar with the literate style and
+who are adept at reading source code directly,
+the chunk definitions and reordering
+provided by the tangle operation can be a bit disconcerting at first.
+You can, of course, examine the tangled source output,
+but if you read the program as a document,
+you will have to trust that the
+author managed to arrange the chunk definitions and references in
+a manner so that the tangled output is in an acceptable order.</simpara>
+</appendix>
+</article>

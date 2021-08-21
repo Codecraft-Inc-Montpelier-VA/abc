@@ -1,0 +1,15 @@
+<!--
+  article-docinfo.xml
+  This file contains the revision history.
+  Follow the pattern of the XML to add the information.
+-->
+<revhistory>
+  <revision>
+    <revnumber>1.0</revnumber>
+    <date>July 21, 2021</date>
+    <authorinitials>CWRC</authorinitials>
+    <revremark>
+      First version of abc as a literate program.
+    </revremark>
+  </revision>
+</revhistory>
