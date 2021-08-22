@@ -32,9 +32,9 @@ First, we'll look at the "set up".
 
 === +main+'s Set Up
 
-A special value is inserted into the ebx register for comparison later, 
+A special value is inserted into the rbx register for comparison later, 
 following execution of the coroutines.
-The ebx register value must be preserved unchanged by coroutine execution.
+The rbx register value must be preserved unchanged by coroutine execution.
 
 We are using the sccor library, so we need to include its header.
 
@@ -59,7 +59,7 @@ unsigned long _RBX = 0xbbbbbbbbbbbbbbbb ;
 char temp[ 200 ] ;
 asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
 stop = false ;
-sprintf( temp, "\n-> in main (before cobegin): ebx = %08lx.\n", _RBX ) ;
+sprintf( temp, "\n-> in main (before cobegin): rbx = %08lx.\n", _RBX ) ;
 strprt( temp ) ;
 CR ;
 ----
@@ -187,7 +187,7 @@ void counter( int count ) {
    asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
 
    asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
-   sprintf( temp, "-> in counter (after changing ebx value): ebx = %08lx.\n\n", _RBX ) ;
+   sprintf( temp, "-> in counter (after changing rbx value): rbx = %08lx.\n\n", _RBX ) ;
    strprt( temp ) ;
    for ( long i = 0; i < count; i++ ) {
       coresume() ;
@@ -196,9 +196,9 @@ void counter( int count ) {
 }
 ----
 
-You will note that +counter+ changes the value in the ebx register, in 
+You will note that +counter+ changes the value in the rbx register, in 
 order to test that the secor coroutine implementation preserves the value
-in the ebx register, as required by the x86_64 ABI.
+in the rbx register, as required by the x86_64 ABI.
 
 === +main+'s Take Down
 
@@ -206,14 +206,14 @@ in the ebx register, as required by the x86_64 ABI.
 After all coroutines have finished their executions, processing resumes 
 in +main+ at the statement following the +cobegin+ statement.
 
-Before exiting, +main+ shows the contents of the ebx register.
+Before exiting, +main+ shows the contents of the rbx register.
 The value should be the same as it was prior to starting the coroutines.
 
 [source,c]
 ----
 <<take down>>=
 asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
-sprintf( temp, "\n-> in main (after cobegin): ebx = %08lx.\n\n", _RBX ) ;
+sprintf( temp, "\n-> in main (after cobegin): rbx = %08lx.\n\n", _RBX ) ;
 strprt( temp ) ;
 return 0 ;
 ----
