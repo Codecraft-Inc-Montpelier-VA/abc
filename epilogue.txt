@@ -10,7 +10,7 @@ using Codecraft's open-source sccor library, running on
 macOS and Windows. 
 
 There are a couple of more interesting and ambitious coroutine test programs
-available as literate programs and macOS and Windows (Cygwin) executables.
+available as literate programs.
 
 === The +darts+ Program
 

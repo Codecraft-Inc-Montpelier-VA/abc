@@ -151,7 +151,7 @@ of the +abc+ program.
 == +abc+ Execution
 
 Run the +abc+ executable in a macOSfootnote:[Big Sur (11.0), or later,
-is supported.] Terminal or Windows 10 Command window, as appropriate. 
+is supported.] Windows 10 Terminal window. 
 
 Syntax:
 
