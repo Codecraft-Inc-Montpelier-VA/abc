@@ -6,7 +6,7 @@ instructions for its execution.
 
 The +abc+ program is a simple test program for 
 Simple C/C++ Coroutines using Codecraft's open-source sccor library.
-+abc+ runs in a Terminal window on macOS or in a Command window on Windows. 
++abc+ runs in a Terminal window on macOS or Windows (Cygwin). 
 (((sccor Library)))
 
 The sccor Library's Simple C/C++ Coroutines implementation  

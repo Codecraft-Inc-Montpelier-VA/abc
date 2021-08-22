@@ -118,12 +118,6 @@ DOCPARTS=\
 	bibliography.txt\
 	$(NULL)
 
-# List diagrams here. Include the "uxf" extension. All files listed
-# here should be in the "figures" directory. For example:
-#	class-diagram.uxf\
-#	collaboration.uxf\
-#	foo-sm.uxf\
-
 DIAGRAMS =\
 	$(NULL)
 
@@ -157,7 +151,6 @@ CLEANFILES =\
 
 A2XOPTS =\
 	--no-xmllint\
-	--verbose\
 	$(NULL)
 
 # The verbose option added to A2XOPTS can be used to diagnose errors

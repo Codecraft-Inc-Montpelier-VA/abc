@@ -4,37 +4,67 @@
 [bibliography]
 .Programs
 - [[[cc-abc-mac]]] Cary WR Campbell,
-    'The +abc+ Program'--macOS Version,
+    'The +abc+ Program Executable File--macOS Version',
     July 2021,
     https://drive.google.com/file/d/1tgGFy8SNFteQmVTQsem8LcdW8eirYPCf/view?usp=sharing.
 - [[[cc-abc-win]]] Cary WR Campbell,
-    'The +abc+ Program'--Windows Version,
+    'The +abc+ Program Executable File--Windows (Cygwin) Version',
     July 2021,
-    Not Released Yet.
+    https://drive.google.com/file/d/1O0sfpd1Q0fHdx1h8xwYYvGjTOOy0sVg5/view?usp=sharing.
 - [[[cc-darts-program]]] Cary WR Campbell,
     'The +darts+ Literate Program',
     March 2021,
     https://drive.google.com/file/d/1qOwo0P0nbFlritH3ha4FHqa6i1VwOTwS/view?usp=sharing.
 - [[[cc-darts-mac]]] Cary WR Campbell,
-    'The +darts+ Program'--macOS Version,
+    'The +darts+ Program Executable File--macOS Version',
     March 2021,
-    https://drive.google.com/file/d/1i6dUUyfr_3xP51dZA0D4MIq77n-bd8Un/view?usp=sharing.
+    https://drive.google.com/file/d/1fmRXu69oFyWag_Li-UGkLO-H0-Ufwt_q/view?usp=sharing.
+- [[[cc-darts-win]]] Cary WR Campbell,
+    'The +darts+ Program Executable File--Windows (Cygwin) Version',
+    March 2021,
+    https://drive.google.com/file/d/1MaQGIpnH1-i7DltL2f_RQaS0BBzxkOET/view?usp=sharing.
 - [[[cc-elevator-program]]] Cary WR Campbell,
     'The +elevator+ Literate Program',
     June 2021,
     https://drive.google.com/file/d/1AIKR9hAKQWzCLRD3tMeD2fknfdw_mq23/view?usp=sharing.    
 - [[[cc-elevator-mac]]] Cary WR Campbell,
-    'The +elevator+ Program'--macOS Version,
+    'The +elevator+ Program Executable File--macOS Version',
     June 2021,
     https://drive.google.com/file/d/1Zk0dyyKOYPEWoDlzvhlVwKkxyC1LrOyx/view?usp=sharing.
+- [[[cc-elevator-win]]] Cary WR Campbell,
+    'The +elevator+ Program Executable File--Windows (Cygwin) Version',
+    June 2021,
+    https://drive.google.com/file/d/1RB35oz9nrXgS2x_-vrd6zOPIxXCFaOYv/view?usp=sharing.
 - [[[cc-sccor-mac]]] Cary WR Campbell,
-    'The +sccor+ Library'--macOS Version,
+    'The +sccor+ Library Executable File--macOS Version',
     March 2021,
-    https://drive.google.com/file/d/1ouWwM-mrNjMnHWMJSqTAeb6KbS2Z6aGG/view?usp=sharing.
+    https://drive.google.com/file/d/1v2lkjS8B54feVQeK2uu38P2IwCU6T1lU/view?usp=sharing.
 - [[[cc-sccor-win]]] Cary WR Campbell,
-    'The +sccor+ Library'--Windows Version,
+    'The +sccor+ Library Executable File--Windows (Cygwin) Version',
     July 2021,
-    To Be Released in July, 2021.
+    https://drive.google.com/file/d/1sMbcZihkmOvjrr7DTU8AmKUna1r7NpBA/view?usp=sharing.
+[bibliography]
+.Projects
+- [[[cc-abc-git]]] Cary WR Campbell,
+    'The +abc+ Program GitHub Project',
+    August 2021,
+    https://github.com/Codecraft-Inc-Montpelier-VA/abc.
+- [[[cc-darts-git]]] Cary WR Campbell,
+    'The +darts+ Program GitHub Project',
+    August 2021,
+    https://github.com/Codecraft-Inc-Montpelier-VA/darts.
+- [[[cc-elevator-git]]] Cary WR Campbell,
+    'The +elevator+ Program GitHub Project',
+    August 2021,
+    https://github.com/Codecraft-Inc-Montpelier-VA/elevator.
+- [[[cc-evt-git]]] Cary WR Campbell,
+    'The +evt+ Program GitHub Project',
+    August 2021,
+    https://github.com/Codecraft-Inc-Montpelier-VA/evt.
+- [[[cc-sccor-git]]] Cary WR Campbell,
+    'The +sccor+ Library GitHub Project',
+    August 2021,
+    https://github.com/Codecraft-Inc-Montpelier-VA/sccor.
 [bibliography]
 .Articles
 - [[[pbh-edison]]] Per Brinch Hansen, 

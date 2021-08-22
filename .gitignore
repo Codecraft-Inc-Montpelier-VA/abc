@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# macOS Detritis
+.DS_Store
+
+# Outfile Directories
+Debug/
+Release/
