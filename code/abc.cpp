@@ -60,7 +60,7 @@ int main( int argc, char* argv[] ) {
    char temp[ 200 ] ;
    asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
    stop = false ;
-   sprintf( temp, "\n-> in main (before cobegin): ebx = %08lx.\n", _RBX ) ;
+   sprintf( temp, "\n-> in main (before cobegin): rbx = %08lx.\n", _RBX ) ;
    strprt( temp ) ;
    CR ;
    cobegin( 3,                              // <1>
@@ -70,7 +70,7 @@ int main( int argc, char* argv[] ) {
           ) ;
    CR ;
    asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
-   sprintf( temp, "\n-> in main (after cobegin): ebx = %08lx.\n\n", _RBX ) ;
+   sprintf( temp, "\n-> in main (after cobegin): rbx = %08lx.\n\n", _RBX ) ;
    strprt( temp ) ;
    return 0 ;
 }
@@ -89,7 +89,7 @@ void counter( int count ) {
    asm ( "movq %0, %%rbx" : /* no outputs */ : "rm" (_RBX) : "%rbx" ) ;
 
    asm ( "movq %%rbx, %0" : "=rm" (_RBX) : /* no inputs */ ) ;
-   sprintf( temp, "-> in counter (after changing ebx value): ebx = %08lx.\n\n", _RBX ) ;
+   sprintf( temp, "-> in counter (after changing rbx value): rbx = %08lx.\n\n", _RBX ) ;
    strprt( temp ) ;
    for ( long i = 0; i < count; i++ ) {
       coresume() ;
